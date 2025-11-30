@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hacker Matrix Terminal</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: #00ff00;
+      font-family: monospace;
+      overflow: hidden;
+    }
+
+    #intro {
+      padding: 20px;
+      white-space: pre;
+      font-size: 18px;
+    }
+
+    canvas {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  </style>
+</head>
+<body>
+  <div id="intro"></div>
+  <canvas id="matrix"></canvas>
+
+  <script>
+    const introText = `Connecting to the server...
+Authorization granted.
+Loading environment...
+Launching system in 3... 2... 1...
+
+WELCOME TO MATRIX MODE`;
+
+    const introEl = document.getElementById("intro");
+    let index = 0;
+
+    function typeIntro() {
+      if (index < introText.length) {
+        introEl.textContent += introText.charAt(index);
+        index++;
+        setTimeout(typeIntro, 50);
+      } else {
+        setTimeout(() => {
+          introEl.style.display = 'none';
+          startMatrix();
+        }, 1000);
+      }
+    }
+
+    typeIntro();
+
+    function startMatrix() {
+      const canvas = document.getElementById("matrix");
+      const ctx = canvas.getContext("2d");
+
+      canvas.style.display = 'block';
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const letters = "01".split("");
+      const fontSize = 16;
+      const columns = canvas.width / fontSize;
+
+      const drops = Array(Math.floor(columns)).fill(1);
+
+      function draw() {
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#0f0";
+        ctx.font = fontSize + "px monospace";
+
+        for (let i = 0; i < drops.length; i++) {
+          const text = letters[Math.floor(Math.random() * letters.length)];
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+          if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+          drops[i]++;
+        }
+
+        requestAnimationFrame(draw);
+      }
+
+      draw();
+    }
+  </script>
+</body>
+</html>
